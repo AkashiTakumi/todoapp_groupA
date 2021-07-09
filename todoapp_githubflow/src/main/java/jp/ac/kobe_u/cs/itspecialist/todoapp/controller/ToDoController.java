@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 
 import jp.ac.kobe_u.cs.itspecialist.todoapp.dto.LoginForm;
 import jp.ac.kobe_u.cs.itspecialist.todoapp.dto.ToDoForm;
@@ -31,8 +32,19 @@ public class ToDoController {
      */
     @GetMapping("/")
     String showIndex(@ModelAttribute(name = "loginForm") LoginForm loginForm, Model model) {
-        //model.addAttribute("loginForm", loginForm);
+        // model.addAttribute("loginForm", loginForm);
         return "index";
+    }
+
+    /**
+     * * ToDoの更新．期限を追加，削除する．その後，ユーザページへリダイレクトする．
+     */
+
+    @PutMapping("/{mid}/todos/{seq}/due")
+    String updateDueDate(@PathVariable String mid, @PathVariable Long seq,
+            @Validated @ModelAttribute(name = "ToDoForm") ToDoForm form, Model model) {
+        tService.updateDueDate(mid, seq, form.getDueDate());
+        return "redirect:/" + mid + "/todos";
     }
 
     /**
