@@ -2,6 +2,7 @@ package jp.ac.kobe_u.cs.itspecialist.todoapp.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,42 +18,70 @@ public class ToDoService {
     MemberService mService;
     @Autowired
     ToDoRepository tRepo;
+
     /**
      * ToDoを作成する (C)
-     * @param mid 作成者
+     * 
+     * @param mid  作成者
      * @param form フォーム
      * @return
      */
     public ToDo createToDo(String mid, ToDoForm form) {
-        mService.getMember(mid); //実在メンバーか確認
+        mService.getMember(mid); // 実在メンバーか確認
         ToDo todo = form.toEntity();
+        if (!todo.isValidDueDate()) {
+            throw new ToDoAppException(ToDoAppException.INVALID_TODO_OPERATION,
+                    todo.getDueAt() + ": should be after created at");
+        }
         todo.setMid(mid);
         return tRepo.save(todo);
     }
 
     /**
+     * + * 〆切を更新する
+     * 
+     * @param mid
+     * @param seq
+     * @param due
+     */
+    public ToDo updateDueDate(String mid, Long seq, Date due) {
+        ToDo todo = getToDo(seq);
+        if (!Objects.equals(mid, todo.getMid())) {
+            throw new ToDoAppException(ToDoAppException.INVALID_TODO_OPERATION,
+                    mid + ": Cannot done other's todo of " + todo.getMid());
+        }
+        if (due != null && due.before(todo.getCreatedAt())) {
+            throw new ToDoAppException(ToDoAppException.INVALID_TODO_OPERATION, due + ": should be after created at.");
+        }
+        todo.setDueAt(due);
+        return tRepo.save(todo);
+    }
+
+    /**
      * ToDoを1つ取得する (R)
+     * 
      * @param seq
      * @return
      */
     public ToDo getToDo(Long seq) {
         ToDo todo = tRepo.findById(seq).orElseThrow(
-            () -> new ToDoAppException(ToDoAppException.NO_SUCH_TODO_EXISTS, 
-            seq + ": No such ToDo exists")
-        );
+                () -> new ToDoAppException(ToDoAppException.NO_SUCH_TODO_EXISTS, seq + ": No such ToDo exists"));
         return todo;
     }
 
     /**
      * あるメンバーのToDoリストを取得する (R)
+     * 
      * @param mid
      * @return
      */
     public List<ToDo> getToDoList(String mid) {
         return tRepo.findByMidAndDone(mid, false);
     }
+
     /**
      * あるメンバーのDoneリストを取得する (R)
+     * 
      * @param mid
      * @return
      */
@@ -62,6 +91,7 @@ public class ToDoService {
 
     /**
      * 全員のToDoリストを取得する (R)
+     * 
      * @return
      */
     public List<ToDo> getToDoList() {
@@ -70,25 +100,26 @@ public class ToDoService {
 
     /**
      * 全員のDoneリストを取得する (R)
+     * 
      * @return
      */
     public List<ToDo> getDoneList() {
         return tRepo.findByDone(true);
     }
 
-
     /**
      * ToDoを完了する
+     * 
      * @param mid 完了者
      * @param seq 完了するToDoの番号
      * @return
      */
     public ToDo done(String mid, Long seq) {
         ToDo todo = getToDo(seq);
-        //Doneの認可を確認する．他人のToDoを閉めたらダメ．
+        // Doneの認可を確認する．他人のToDoを閉めたらダメ．
         if (!mid.equals(todo.getMid())) {
-            throw new ToDoAppException(ToDoAppException.INVALID_TODO_OPERATION, mid 
-            + ": Cannot done other's todo of " + todo.getMid());
+            throw new ToDoAppException(ToDoAppException.INVALID_TODO_OPERATION,
+                    mid + ": Cannot done other's todo of " + todo.getMid());
         }
         todo.setDone(true);
         todo.setDoneAt(new Date());
@@ -97,37 +128,37 @@ public class ToDoService {
 
     /**
      * ToDoを更新する
-     * @param mid 更新者
-     * @param seq 更新するToDo番号
-     * @param form　更新フォーム
+     * 
+     * @param mid  更新者
+     * @param seq  更新するToDo番号
+     * @param form 更新フォーム
      * @return
      */
     public ToDo updateToDo(String mid, Long seq, ToDoForm form) {
         ToDo todo = getToDo(seq);
-        //Doneの認可を確認する．他人のToDoを更新したらダメ．
+        // Doneの認可を確認する．他人のToDoを更新したらダメ．
         if (!mid.equals(todo.getMid())) {
-            throw new ToDoAppException(ToDoAppException.INVALID_TODO_OPERATION, mid 
-            + ": Cannot update other's todo of " + todo.getMid());
+            throw new ToDoAppException(ToDoAppException.INVALID_TODO_OPERATION,
+                    mid + ": Cannot update other's todo of " + todo.getMid());
         }
-        todo.setTitle(form.getTitle()); //タイトルを更新
+        todo.setTitle(form.getTitle()); // タイトルを更新
         return tRepo.save(todo);
     }
 
     /**
      * ToDoを削除する
+     * 
      * @param mid 削除者
      * @param seq 削除するToDo番号
      */
     public void deleteToDo(String mid, Long seq) {
         ToDo todo = getToDo(seq);
-        //Doneの認可を確認する．他人のToDoを削除したらダメ．
+        // Doneの認可を確認する．他人のToDoを削除したらダメ．
         if (!mid.equals(todo.getMid())) {
-            throw new ToDoAppException(ToDoAppException.INVALID_TODO_OPERATION, mid 
-            + ": Cannot delete other's todo of " + todo.getMid());
+            throw new ToDoAppException(ToDoAppException.INVALID_TODO_OPERATION,
+                    mid + ": Cannot delete other's todo of " + todo.getMid());
         }
         tRepo.deleteById(seq);
     }
-
-
 
 }
