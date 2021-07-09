@@ -19,7 +19,8 @@
             <th>タイトル</th>
             <th>期限日時</th>
             <th>作成日時</th>
-            <th>コマンド</th>
+            <th>コマンド1</th>
+            <th>コマンド2</th>
         </tr>
         <tr th:each="todo: ${todos}">
             <td>[[${todo.seq}]]</td>
@@ -33,6 +34,9 @@
                     <input type="submit" value="期日を設定" />
                 </form>
                 <a th:href="@{/{mid}/todos/{seq}/done(mid=${member.mid},seq=${todo.seq})}">完了</a>
+            </td>
+            <td>
+                <a th:href="@{/{mid}/todos/{seq}/cancel(mid=${member.mid},seq=${todo.seq})}">キャンセル</a>
             </td>
         </tr>
         <tr>
