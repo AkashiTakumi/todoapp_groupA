@@ -1,10 +1,13 @@
 package jp.ac.kobe_u.cs.itspecialist.todoapp.service;
 
 import java.util.Date;
+//import java.util.List;
 import java.util.List;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import jp.ac.kobe_u.cs.itspecialist.todoapp.dto.ToDoForm;
@@ -75,8 +78,13 @@ public class ToDoService {
      * @param mid
      * @return
      */
+    public Page<ToDo> getToDoList(String mid, Pageable pageable) {
+        return tRepo.findByMidAndDone(mid, false, pageable);
+    }
+
     public List<ToDo> getToDoList(String mid) {
         return tRepo.findByMidAndDone(mid, false);
+        
     }
 
     /**
@@ -85,6 +93,10 @@ public class ToDoService {
      * @param mid
      * @return
      */
+    public Page<ToDo> getDoneList(String mid, Pageable pageable) {
+        return tRepo.findByMidAndDone(mid, true, pageable);
+    }
+
     public List<ToDo> getDoneList(String mid) {
         return tRepo.findByMidAndDone(mid, true);
     }
@@ -94,8 +106,8 @@ public class ToDoService {
      * 
      * @return
      */
-    public List<ToDo> getToDoList() {
-        return tRepo.findByDone(false);
+    public Page<ToDo> getToDoList(Pageable pageable) {
+        return tRepo.findByDone(false, pageable);
     }
 
     /**
@@ -103,8 +115,8 @@ public class ToDoService {
      * 
      * @return
      */
-    public List<ToDo> getDoneList() {
-        return tRepo.findByDone(true);
+    public Page<ToDo> getDoneList(Pageable pageable) {
+        return tRepo.findByDone(true, pageable);
     }
 
     /**

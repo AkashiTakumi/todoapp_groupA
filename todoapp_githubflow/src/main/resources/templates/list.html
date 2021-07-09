@@ -50,6 +50,25 @@
         </tr>
     </table>
 
+    <div th:fragment='paginationbar'>
+        <ul>
+            <li th:class="${todos.first} ? 'disabled':''" style="display:inline">
+                <span th:if="${todos.first}">←先頭</span>
+                <a th:if="${not todos.first}" th:href="@{${url}(page=0)}">←先頭</a>
+            </li>
+            <li th:each='i : ${#numbers.sequence(0, todos.totalPages-1)}' th:class="(${i}==${todos.number})? 'active' : ''" style="display:inline">
+                <span th:if='${i}==${todos.number}' th:text='${i+1}'>1</span>
+                <a th:if='${i}!=${todos.number}' th:href="@{${url}(page=${i})}">
+                    <span th:text='${i+1}'>1</span>
+                </a>
+            </li>
+            <li th:class="${todos.last} ? 'disabled':''" style="display:inline">
+                <span th:if="${todos.last}">末尾➝</span>
+                <a th:if="${not todos.last}" th:href="@{${url}(page=(${todos.totalPages}-1))}">末尾➝</a>
+            </li>
+        </ul>
+    </div>
+
     <h2>Done</h2>
     <table border="1">
         <tr>
@@ -67,6 +86,25 @@
             <td>[[${done.doneAt}]]</td>
         </tr>
     </table>
+
+    <div th:fragment='paginationbar'>
+        <ul>
+            <li th:class="${dones.first} ? 'disabled':''" style="display:inline">
+                <span th:if="${dones.first}">←先頭</span>
+                <a th:if="${not dones.first}" th:href="@{${url}(page=0)}">←先頭</a>
+            </li>
+            <li th:each='i : ${#numbers.sequence(0, dones.totalPages-1)}' th:class="(${i}==${dones.number})? 'active' : ''" style="display:inline">
+                <span th:if='${i}==${dones.number}' th:text='${i+1}'>1</span>
+                <a th:if='${i}!=${dones.number}' th:href="@{${url}(page=${i})}">
+                    <span th:text='${i+1}'>1</span>
+                </a>
+            </li>
+            <li th:class="${dones.last} ? 'disabled':''" style="display:inline">
+                <span th:if="${dones.last}">末尾➝</span>
+                <a th:if="${not dones.last}" th:href="@{${url}(page=(${dones.totalPages}-1))}">末尾➝</a>
+            </li>
+        </ul>
+    </div>
 
 </body>
 
