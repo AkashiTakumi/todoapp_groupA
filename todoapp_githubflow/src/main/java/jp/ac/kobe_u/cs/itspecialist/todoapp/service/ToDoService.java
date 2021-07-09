@@ -128,6 +128,22 @@ public class ToDoService {
         tRepo.deleteById(seq);
     }
 
-
+    /**
+     * ToDoの色を変更する
+     * @param mid 更新者
+     * @param seq 更新するToDo番号
+     * @param color　色
+     * @return
+     */
+    public ToDo changeColor(String mid, Long seq, String color) {
+        ToDo todo = getToDo(seq);
+        //Doneの認可を確認する．他人のToDoを更新したらダメ．
+        if (!mid.equals(todo.getMid())) {
+            throw new ToDoAppException(ToDoAppException.INVALID_TODO_OPERATION, mid 
+            + ": Cannot update other's todo of " + todo.getMid());
+        }
+        todo.setColor(color); //色を変更
+        return tRepo.save(todo);
+    }
 
 }

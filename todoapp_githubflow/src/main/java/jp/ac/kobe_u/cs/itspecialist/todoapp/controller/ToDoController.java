@@ -100,4 +100,13 @@ public class ToDoController {
         tService.done(mid, seq);
         return "redirect:/" + mid + "/todos";
     }
+
+    /**
+     * ToDoの色変更．完了処理後，ユーザページへリダイレクト
+     */
+    @PostMapping("/{mid}/todos/{seq}/color")
+    String changeColor(@PathVariable String mid, @PathVariable Long seq, @Validated @ModelAttribute(name="ToDoForm") ToDoForm form, Model model) {
+        tService.changeColor(mid, seq, form.getColor());
+        return "redirect:/" + mid + "/todos";
+    }
 }
