@@ -1,3 +1,4 @@
+
 package jp.ac.kobe_u.cs.itspecialist.todoapp.controller;
 
 import java.util.List;
@@ -49,13 +50,13 @@ public class ToDoRestController {
     /* --- R: ToDoを取得する (リスト) --- */
     @GetMapping("/{mid}/todos")
     List<ToDo> getToDoList(@PathVariable String mid) {
-        return todoService.getToDoList(mid);
+        return todoService.getToDoList(mid, "seq", "asc");
     }
 
     /* --- R: Doneを取得する (リスト) --- */
     @GetMapping("/{mid}/dones")
     List<ToDo> getDoneList(@PathVariable String mid) {
-        return todoService.getDoneList(mid);
+        return todoService.getDoneList(mid, "seq", "asc");
     }
 
     /* --- U: ToDoを完了する --- */
