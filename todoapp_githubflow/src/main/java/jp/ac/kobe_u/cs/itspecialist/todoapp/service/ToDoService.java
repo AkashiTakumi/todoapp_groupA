@@ -52,10 +52,9 @@ public class ToDoService {
 
     /**
      * あるメンバーのToDoリストを取得
-     * 
      * @param mid
-     * @param sortBy
-     * @param order
+     * @param sortBy 何でソートするか. 例えば次のうちのどれか{"Seq", "mid", ...}
+     * @param order 昇順:asc 降順:desc
      * @return
      */
     public List<ToDo> getToDoList(String mid, String sortBy, String order) {
@@ -66,9 +65,11 @@ public class ToDoService {
     }
 
     /**
-     * あるメンバーのDoneリストを取得する (R)
-     * 
+     * あるメンバーのDoneリストを取得
+     * getToDoListと同じ
      * @param mid
+     * @param sortBy
+     * @param order
      * @return
      */
     public List<ToDo> getDoneList(String mid, String sortBy, String order) {
@@ -81,24 +82,25 @@ public class ToDoService {
     private final Map<Pair<String, String>, BiFunction<String, Boolean, List<ToDo>>> midAndDoneFinder = generateMidAndDoneFinder();
 
     /**
-     * ソート機能の実装方法といて、mapを利用
-     * mapのハッシュタグとして、(sortBy, order), (mid, done) の4つ(2つのタプル)をkeyとする
-     * それぞれのkeyに対応したList<ToDo>を返す'関数を返す'
-     * generateDoneFinderも同じ実装方法
-     * こちらは各自のToDo用
+     * ソート機能の実装方法といて、mapを利用 mapのハッシュタグとして、(sortBy, order), (mid, done)
+     * の4つ(2つのタプル)をkeyとする それぞれのkeyに対応したList<ToDo>を返す'関数を返す'
+     * generateDoneFinderも同じ実装方法 こちらは各自のToDo用
      * 
      * 例えば、keyとして(("seq", "asc"), ("mid", "done"))を渡したとき、
-     * tRepo.findByMidAndDoneOrderBySeqAsc(mid, done): midとdoneが一致し、Seqが昇順並べ替えられたList<ToDo>を返す'関数を返す'
+     * tRepo.findByMidAndDoneOrderBySeqAsc(mid, done):
+     * midとdoneが一致し、Seqが昇順並べ替えられたList<ToDo>を返す'関数を返す'
      * なので、このmapによって返されるのは関数なので、その関数のメソッド'apply'を使うことで、求めているList<ToDo>が得られる
      * 
-     * プログラム内での使われ方の流れとしては、
-     * 1. generateMidAndDoneFinder() によってmapを作成
-     * 2. getDoneList(String mid, String sortBy, String order)の引数に従い、map.getOrDefault(引数)により関数が返される
-     * 3. 返された関数のメソッドapplyによりList<ToDo>が返される
+     * プログラム内での使われ方の流れとしては、 1. generateMidAndDoneFinder() によってmapを作成 2.
+     * getDoneList(String mid, String sortBy, String
+     * order)の引数に従い、map.getOrDefault(引数)により関数が返される 3.
+     * 返された関数のメソッドapplyによりList<ToDo>が返される
      * 
-     * Java memo: BiFunction<String, Boolean, List<ToDo>>: (String, Boolean)を引数とし、List<ToDo>を返す'関数'
+     * Java memo: BiFunction<String, Boolean, List<ToDo>>: (String,
+     * Boolean)を引数とし、List<ToDo>を返す'関数'
      * https://docs.oracle.com/javase/jp/8/docs/api/java/util/function/BiFunction.html
-     * @return 
+     * 
+     * @return
      */
     private Map<Pair<String, String>, BiFunction<String, Boolean, List<ToDo>>> generateMidAndDoneFinder() {
         Map<Pair<String, String>, BiFunction<String, Boolean, List<ToDo>>> map = new HashMap<>();
@@ -114,8 +116,10 @@ public class ToDoService {
     }
 
     /**
-     * 全員のToDoリストを取得する (R)
+     * 全員のToDoリストを取得する
      * 
+     * @param sortBy
+     * @param order
      * @return
      */
     public List<ToDo> getToDoList(String sortBy, String order) {
@@ -125,8 +129,10 @@ public class ToDoService {
     }
 
     /**
-     * 全員のDoneリストを取得する (R)
+     * 全員のDoneリストを取得する
      * 
+     * @param sortBy
+     * @param order
      * @return
      */
     public List<ToDo> getDoneList(String sortBy, String order) {
@@ -138,11 +144,10 @@ public class ToDoService {
     private final Map<Pair<String, String>, Function<Boolean, List<ToDo>>> doneFinder = generateDoneFinder();
 
     /**
-     * generateMidAndDoneFinder と同じ実装方法
-     * こちらはみんなのToDo用
-     * なので、引数にmidは持たない
+     * generateMidAndDoneFinder と同じ実装方法 こちらはみんなのToDo用 なので、引数にmidは持たない
      * 
      * https://docs.oracle.com/javase/jp/8/docs/api/java/util/function/BiFunction.html
+     * 
      * @return map
      */
     private Map<Pair<String, String>, Function<Boolean, List<ToDo>>> generateDoneFinder() {
