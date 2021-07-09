@@ -21,10 +21,15 @@
             <th>コマンド</th>
         </tr>
         <tr th:each="todo: ${todos}">
-            <td>[[${todo.seq}]]</td>
+            <td th:style="'background-color: ' + ${todo.color}">[[${todo.seq}]]</td>
             <td>[[${todo.title}]]</td>
             <td>[[${todo.createdAt}]]</td>
             <td>
+                <form th:object="${ToDoForm}" th:action="@{/{mid}/todos/{seq}/color(mid=${member.mid},seq=${todo.seq})}" th:method="post">
+                    <input type="hidden" name="title" th:value="${todo.title}"/>
+                    <input type="color" name="color" th:value="${todo.color}" />
+                    <input type="submit" value="更新" />
+                    </form>
                 <a th:href="@{/{mid}/todos/{seq}/done(mid=${member.mid},seq=${todo.seq})}">完了</a>
             </td>
         </tr>
@@ -35,6 +40,7 @@
             <td colspan="3">
                 <form role="form" th:action="@{/{mid}/todos(mid=${member.mid})}" th:object="${ToDoForm}" method="post">
                     <input type="text" required th:field="*{title}" />
+                    <input type="color" required name="color" th:value="*{color == null ? '#ffffff': color}" />
                     <input type="submit" value="新規作成" />
                     <div th:if="${#fields.hasErrors('title')}" th:errors="*{title}" style="color: red"></div>
                 </form>
@@ -51,7 +57,7 @@
             <th>完了日時</th>
         </tr>
         <tr th:each="done: ${dones}">
-            <td>[[${done.seq}]]</td>
+            <td th:style="'background-color: ' + ${done.color}">[[${done.seq}]]</td>
             <td>[[${done.title}]]</td>
             <td>[[${done.createdAt}]]</td>
             <td>[[${done.doneAt}]]</td>
