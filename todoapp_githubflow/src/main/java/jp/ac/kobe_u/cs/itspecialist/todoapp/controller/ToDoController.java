@@ -100,4 +100,12 @@ public class ToDoController {
         tService.done(mid, seq);
         return "redirect:/" + mid + "/todos";
     }
+    /**
+     * ToDoのキャンセル．キャンセル後，ユーザページへリダイレクト
+     */
+    @GetMapping("/{mid}/todos/{seq}/cancel")
+    String cancelToDo(@PathVariable String mid, @PathVariable Long seq, Model model){
+        tService.deleteToDo(mid,seq);
+        return "redirect:/"+ mid +"/todos";
+    }
 }

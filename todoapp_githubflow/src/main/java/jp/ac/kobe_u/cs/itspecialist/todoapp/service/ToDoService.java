@@ -94,7 +94,6 @@ public class ToDoService {
         todo.setDoneAt(new Date());
         return tRepo.save(todo);
     }
-
     /**
      * ToDoを更新する
      * @param mid 更新者
